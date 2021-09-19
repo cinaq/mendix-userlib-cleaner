@@ -1,3 +1,54 @@
+# Mendix Userlib cleaner
+
+This little utility can be used to identify and clean duplicate JARs. It was created mainly for [Mendix](https://mendix.com) apps due to lack of formal dependency management support. This is by no means limited to Mendix use-case. It works for arbitary systems.
+
+Please note that this is not a magic tool that solves all JAR problems. After running the clean tool, always clean your project, rebuild and run it locally.
+
+## Why clean userlib?
+
+Most Mendix modules includes one or more JAR files. JAR files are java libraries. This is a common approach to extend functionalities in Mendix apps. However as your application ages and grows there's a need to add more modules or update existing ones which introduces newer versions. These JAR's are not managed by Mendix Studio. Due to these dynamics, newer JAR can be introduced at later stage. This causes duplication. Due to JAR duplication it often causes compatibility issues. If you are lucky these errors occur during compile time. At other times these occur during runtime.
+
+## How does this work?
+
+It works as follow:
+
+- list all the JAR files
+- for each JAR file compute its properties by extracting `MANIFEST.MF` or `pom.properties` from the JAR file
+- Next we loop over the metadata and determine which JAR to keep and discard duplicates. This is done based on the package name (e.g. org.package.velocity) and the version (e.g. 1.7)
+- Those marked to be discarded are then removed.
+
+## Usage
+
+```bash
+mendix-userlib-cleaner --help
+Usage of mendix-userlib-cleaner:
+      --clean           Turn on to actually remove the duplicate jars. Default: false
+      --target string   Path to userlib. Default: . (current directory) (default ".")
+      --verbose         Turn on to see debug information. Default: false
+pflag: help requested
+
+
+$ mendix-userlib-cleaner --target ~/Downloads/userlib        
+10:38:58.906 listAllJars ▶ INFO 001 Finding and parsing JARs
+10:38:59.525 getJarProps ▶ WARN 002 Failed to parse /Users/xcheng/Downloads/userlib/xercesImpl-2.12.1-sp1.jar
+10:38:59.556 computeJarsToKeep ▶ INFO 003 Computing duplicates
+10:38:59.556 computeJarsToKeep ▶ INFO 004 Preferring file xmlsec-2.1.4.jar over xmlsec-2.1.4-copy.jar
+10:38:59.556 cleanJars ▶ INFO 005 Cleaning...
+10:38:59.556 cleanJars ▶ WARN 006 Would remove duplicate of org.apache.santuario.xmlsec: xmlsec-2.1.4-copy.jar
+10:38:59.556 main ▶ INFO 007 Would have removed: 1 files
+10:38:59.556 main ▶ INFO 008 Use --clean to actually remove above file(s)
+```
+
+## Extracting metadata
+
+jar format 1:
+```
+$ cat META-INF/maven/com.sun.istack/istack-commons-runtime/pom.properties
+#Created by Apache Maven 3.5.4
+groupId=com.sun.istack
+artifactId=istack-commons-runtime
+version=3.0.8
+```
 
 jar format 2:
 ```
@@ -43,3 +94,8 @@ Bundle-Description: Google Gson library
 Bundle-SymbolicName: com.google.gson
 Archiver-Version: Plexus Archiver
 ```
+
+
+## License
+
+See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).

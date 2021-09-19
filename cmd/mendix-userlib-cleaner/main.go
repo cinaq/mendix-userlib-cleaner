@@ -109,7 +109,13 @@ func getJarProps(filePath string) JarProperties {
 		}
 		//log.Println("unzipping file ", fileName)
 
-		dstFile, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+		file, err := ioutil.TempFile("", "jar")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer os.Remove(file.Name())
+
+		dstFile, err := os.OpenFile(file.Name(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -126,15 +132,15 @@ func getJarProps(filePath string) JarProperties {
 		dstFile.Close()
 		fileInArchive.Close()
 
-		b, err := ioutil.ReadFile(fileName)
+		b, err := ioutil.ReadFile(file.Name())
 		if err != nil {
 			log.Warningf("Unable to read file: %v", err)
 		}
 
-		err = os.Remove(fileName)
-		if err != nil {
-			log.Fatal(err)
-		}
+		// err = os.Remove(file.Name())
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 
 		// try manifest first
 		text := string(b)
