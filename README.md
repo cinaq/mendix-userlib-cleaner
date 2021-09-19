@@ -4,6 +4,14 @@ This little utility can be used to identify and clean duplicate JARs. It was cre
 
 Please note that this is not a magic tool that solves all JAR problems. After running the clean tool, always clean your project, rebuild and run it locally.
 
+## In rush?
+
+- Download the windows build from [release](https://github.com/cinaq/mendix-userlib-cleaner/releases)
+- Unzip the `mendix-userlib-cleaner.exe` into your userlib you want to clean
+- In Explorer window location write `cmd` and press enter. This opens a black terminal window
+- In this terminal window write: `.\mendix-userlib-cleaner.exe`
+- It should inform you what it will remove. Verify the output and to actually remove the jars write: `.\mendix-userlib-cleaner.exe --clean`
+
 ## Why clean userlib?
 
 Most Mendix modules include one or more JAR files. JAR files are java libraries. This is a common approach to extend functionalities in Mendix apps. However as your application ages and grows there's a need to add more modules or update existing ones which introduces newer versions. These JAR's are not managed by Mendix Studio. Due to these dynamics, newer JAR can be introduced at later stage. This causes duplication. Due to JAR duplication it often causes compatibility issues. If you are lucky these errors occur during compile time. At other times these occur during runtime.
