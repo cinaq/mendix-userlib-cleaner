@@ -37,9 +37,9 @@ type JarProperties struct {
 
 func main() {
 
-	flag.String("target", ".", "Path to userlib. Default: . (current directory)")
-	flag.Bool("clean", false, "Turn on to actually remove the duplicate jars. Default: false")
-	flag.Bool("verbose", false, "Turn on to see debug information. Default: false")
+	flag.String("target", ".", "Path to userlib.")
+	flag.Bool("clean", false, "Turn on to actually remove the duplicate JARs.")
+	flag.Bool("verbose", false, "Turn on to see debug information.")
 
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
