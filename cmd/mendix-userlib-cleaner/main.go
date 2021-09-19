@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"regexp"
 	"strings"
 
 	"archive/zip"
@@ -170,8 +171,7 @@ func parseManifest(filePath string, text string) JarProperties {
 			jarProp.packageName = pair[1]
 		} else if pair[0] == "Bundle-Version" {
 			jarProp.version = pair[1]
-			// FIXME: Use smart conversion
-			jarProp.versionNumber, _ = strconv.Atoi(strings.ReplaceAll(jarProp.version, ".", ""))
+			jarProp.versionNumber = convertVersionToNumber(jarProp.version)
 		} else if pair[0] == "Bundle-Vendor" {
 			jarProp.vendor = pair[1]
 		} else if pair[0] == "Bundle-License" {
@@ -197,8 +197,7 @@ func parsePOM(filePath string, text string) JarProperties {
 			artifactId = pair[1]
 		} else if pair[0] == "version" {
 			jarProp.version = pair[1]
-			// FIXME: Use smart conversion
-			jarProp.versionNumber, _ = strconv.Atoi(strings.ReplaceAll(jarProp.version, ".", ""))
+			jarProp.versionNumber = convertVersionToNumber(jarProp.version)
 		}
 	}
 	if groupId != "" && artifactId != "" {
@@ -264,4 +263,21 @@ func cleanJars(remove bool, jars []JarProperties, keepJars map[string]JarPropert
 		}
 	}
 	return count
+}
+
+func convertVersionToNumber(version string) int {
+	// naive implementation. Feel free to suggest improvements
+
+	re := regexp.MustCompile("[0-9]+")
+
+	multiplier := 1000
+	number := 0
+	for _, c := range re.FindAllString(version, -1) {
+		t, _ := strconv.Atoi(c)
+		if number > 0 {
+			number = number * multiplier
+		}
+		number += t
+	}
+	return number
 }
