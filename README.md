@@ -1,4 +1,4 @@
-# Mendix Userlib cleaner
+# Mendix Userlib Cleaner
 
 This little utility can be used to identify and clean duplicate JARs. It was created mainly for [Mendix](https://mendix.com) apps due to lack of formal dependency management support. This is by no means limited to Mendix use-case. It works for arbitary systems.
 
