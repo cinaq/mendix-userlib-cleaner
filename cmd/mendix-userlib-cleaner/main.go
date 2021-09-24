@@ -156,28 +156,35 @@ func getJarProps(filePath string) JarProperties {
 			return jar2
 		}
 	}
-	log.Warningf("Failed to parse %v", filePath)
+	log.Warningf("Failed to parse metadata from %v", filePath)
 
 	return JarProperties{filePath: ""}
 }
 
 func parseManifest(filePath string, text string) JarProperties {
 	lines := strings.Split(text, "\n")
-	jarProp := JarProperties{filePath: filePath, packageName: "", fileName: filepath.Base(filePath)}
+	jarProp := JarProperties{filePath: filePath, packageName: "", fileName: filepath.Base(filePath), version: ""}
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		pair := strings.Split(line, ": ")
-		if pair[0] == "Bundle-SymbolicName" {
-			jarProp.packageName = pair[1]
-		} else if pair[0] == "Bundle-Version" {
-			jarProp.version = pair[1]
+
+		if len(pair) < 2 {
+			continue
+		}
+
+		key := pair[0]
+		value := pair[1]
+		if key == "Bundle-SymbolicName" || key == "Extension-Name" {
+			jarProp.packageName = value
+		} else if key == "Bundle-Version" || key == "Implementation-Version" {
+			jarProp.version = value
 			jarProp.versionNumber = convertVersionToNumber(jarProp.version)
-		} else if pair[0] == "Bundle-Vendor" {
-			jarProp.vendor = pair[1]
-		} else if pair[0] == "Bundle-License" {
-			jarProp.license = pair[1]
-		} else if pair[0] == "Bundle-Name" {
-			jarProp.name = pair[1]
+		} else if key == "Bundle-Vendor" || key == "Implementation-Vendor" {
+			jarProp.vendor = value
+		} else if key == "Bundle-License" {
+			jarProp.license = value
+		} else if key == "Bundle-Name" || key == "Implementation-Title" {
+			jarProp.name = value
 		}
 	}
 	return jarProp
