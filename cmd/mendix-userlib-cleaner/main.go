@@ -185,6 +185,7 @@ func parseManifest(filePath string, text string) JarProperties {
 			jarProp.license = value
 		} else if key == "Bundle-Name" || key == "Implementation-Title" {
 			jarProp.name = value
+			jarProp.packageName = value
 		}
 	}
 	return jarProp
