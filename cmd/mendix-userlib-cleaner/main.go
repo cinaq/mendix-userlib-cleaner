@@ -41,12 +41,14 @@ func main() {
 	flag.String("target", ".", "Path to userlib.")
 	flag.Bool("clean", false, "Turn on to actually remove the duplicate JARs.")
 	flag.Bool("verbose", false, "Turn on to see debug information.")
+	flag.String("mode", "auto", "Jar parsing mode. Supported options: auto, strict")
 
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 
 	targetDir := viper.GetString("target")
+	mode := viper.GetString("mode")
 	clean := viper.GetBool("clean")
 	verbose := viper.GetBool("verbose")
 
@@ -61,7 +63,7 @@ func main() {
 		logging.SetLevel(logging.INFO, "main")
 	}
 
-	jars := listAllJars(targetDir)
+	jars := listAllJars(targetDir, mode)
 	keepJars := computeJarsToKeep(jars)
 	count := cleanJars(clean, jars, keepJars)
 
@@ -74,7 +76,7 @@ func main() {
 
 }
 
-func listAllJars(targetDir string) []JarProperties {
+func listAllJars(targetDir string, mode string) []JarProperties {
 	log.Info("Finding and parsing JARs")
 	files, err := ioutil.ReadDir(targetDir)
 	if err != nil {
@@ -85,7 +87,7 @@ func listAllJars(targetDir string) []JarProperties {
 		if strings.HasSuffix(f.Name(), ".jar") {
 			log.Debugf("Processing JAR: %v", f.Name())
 			filePath := filepath.Join(targetDir, f.Name())
-			jarProp := getJarProps(filePath)
+			jarProp := getJarProps(filePath, mode)
 			if strings.Compare(jarProp.filePath, "") != 0 {
 				jars = append(jars, jarProp)
 			}
@@ -94,7 +96,7 @@ func listAllJars(targetDir string) []JarProperties {
 	return jars
 }
 
-func getJarProps(filePath string) JarProperties {
+func getJarProps(filePath string, mode string) JarProperties {
 
 	archive, err := zip.OpenReader(filePath)
 	if err != nil {
@@ -138,11 +140,6 @@ func getJarProps(filePath string) JarProperties {
 			log.Warningf("Unable to read file: %v", err)
 		}
 
-		// err = os.Remove(file.Name())
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-
 		// try manifest first
 		text := string(b)
 		jar1 := parseManifest(filePath, text)
@@ -156,6 +153,15 @@ func getJarProps(filePath string) JarProperties {
 			return jar2
 		}
 	}
+
+	if mode == "auto" {
+		jar3 := parseOptimistic(filePath)
+		if jar3.packageName != "" {
+			log.Debugf("Parsed properties optimistically: %v", jar3)
+			return jar3
+		}
+	}
+
 	log.Warningf("Failed to parse metadata from %v", filePath)
 
 	return JarProperties{filePath: ""}
@@ -210,6 +216,43 @@ func parsePOM(filePath string, text string) JarProperties {
 	}
 	if groupId != "" && artifactId != "" {
 		jarProp.packageName = groupId + "." + artifactId
+	}
+	return jarProp
+}
+
+func parseOptimistic(filePath string) JarProperties {
+	// filePath = junit-4.11.jar
+	jarProp := JarProperties{filePath: filePath, packageName: "", fileName: filepath.Base(filePath)}
+
+	// version
+	tokens := strings.Split(filePath, "-")
+	if len(tokens) > 1 {
+		jarProp.version = strings.Replace(tokens[len(tokens)-1], ".jar", "", 1)
+		jarProp.versionNumber = convertVersionToNumber(jarProp.version)
+	}
+
+	archive, err := zip.OpenReader(filePath)
+	if err != nil {
+		panic(err)
+	}
+	defer archive.Close()
+	re := regexp.MustCompile(`(org|com)/.*\.class$`)
+
+	for _, f := range archive.File {
+		if match := re.MatchString(f.Name); match {
+			tokens = strings.Split(f.Name, "/")
+			if len(tokens) > 3 {
+				// eg. org/example/hello/MyClass.class
+				tokens = tokens[:3]
+			} else if len(tokens) > 2 {
+				// eg. org/example/MyClass.class
+				tokens = tokens[:2]
+			} else {
+				tokens = tokens[:1]
+			}
+			jarProp.packageName = strings.Join(tokens, ".")
+			break
+		}
 	}
 	return jarProp
 }
