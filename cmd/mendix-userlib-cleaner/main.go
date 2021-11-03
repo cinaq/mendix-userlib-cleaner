@@ -63,9 +63,10 @@ func main() {
 		logging.SetLevel(logging.INFO, "main")
 	}
 
-	jars := listAllJars(targetDir, mode)
+	filePaths := listAllFiles(targetDir)
+	jars := listAllJars(filePaths, mode)
 	keepJars := computeJarsToKeep(jars)
-	count := cleanJars(clean, jars, keepJars)
+	count := cleanJars(clean, filePaths, jars, keepJars)
 
 	if clean {
 		log.Infof("Total files removed: %d", count)
@@ -76,18 +77,29 @@ func main() {
 
 }
 
-func listAllJars(targetDir string, mode string) []JarProperties {
-	log.Info("Finding and parsing JARs")
+func listAllFiles(targetDir string) []string {
+	log.Infof("Listing all files in target directory: %v", targetDir)
 	files, err := ioutil.ReadDir(targetDir)
 	if err != nil {
 		log.Fatal(err)
 	}
-	jars := []JarProperties{}
+	filePaths := []string{}
 	for _, f := range files {
-		if strings.HasSuffix(f.Name(), ".jar") {
-			log.Debugf("Processing JAR: %v", f.Name())
+		if !f.IsDir() {
 			filePath := filepath.Join(targetDir, f.Name())
-			jarProp := getJarProps(filePath, mode)
+			filePaths = append(filePaths, filePath)
+		}
+	}
+	return filePaths
+}
+
+func listAllJars(filePaths []string, mode string) []JarProperties {
+	log.Info("Finding and parsing JARs")
+	jars := []JarProperties{}
+	for _, f := range filePaths {
+		if strings.HasSuffix(f, ".jar") {
+			log.Debugf("Processing JAR: %v", f)
+			jarProp := getJarProps(f, mode)
 			if strings.Compare(jarProp.filePath, "") != 0 {
 				jars = append(jars, jarProp)
 			}
@@ -294,26 +306,36 @@ func computeJarsToKeep(jars []JarProperties) map[string]JarProperties {
 	return keepJars
 }
 
-func cleanJars(remove bool, jars []JarProperties, keepJars map[string]JarProperties) int {
+func cleanJars(remove bool, filePaths []string, jars []JarProperties, keepJars map[string]JarProperties) int {
 	log.Info("Cleaning...")
-	count := 0
+	jarsCount := 0
+	metafilesCount := 0
 	for _, jar := range jars {
 		jarToKeep := keepJars[jar.packageName]
 		if strings.Compare(jar.filePath, jarToKeep.filePath) != 0 {
-			if _, err := os.Stat(jar.filePath); err == nil {
-				if remove {
-					log.Warningf("Removing duplicate of %v: %v", jar.packageName, jar.fileName)
-					os.Remove(jar.filePath)
-				} else {
-					log.Warningf("Would remove duplicate of %v: %v", jar.packageName, jar.fileName)
+			for _, filePath := range filePaths {
+				if _, err := os.Stat(filePath); err == nil {
+					if strings.HasPrefix(filePath, jar.filePath) {
+						if remove {
+							log.Warningf("Removing file %v: %v", jar.packageName, filePath)
+							os.Remove(filePath)
+						} else {
+							log.Warningf("Would remove file %v: %v", jar.packageName, filePath)
+						}
+						if strings.HasSuffix(filePath, ".jar") {
+							jarsCount++
+						} else {
+							metafilesCount++
+						}
+					}
 				}
-				count++
 			}
 		} else {
 			log.Debugf("Keeping jar: %v", jar)
 		}
 	}
-	return count
+	log.Infof("Clean up %v jars and %v meta files", jarsCount, metafilesCount)
+	return jarsCount + metafilesCount
 }
 
 func convertVersionToNumber(version string) int {
