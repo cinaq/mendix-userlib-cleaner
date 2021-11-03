@@ -31,25 +31,46 @@ It works as follow:
 mendix-userlib-cleaner --help
 Usage of mendix-userlib-cleaner:
       --clean           Turn on to actually remove the duplicate jars. Default: false
+      --mode string     Jar parsing mode. Supported options: auto, strict (default "auto")
       --target string   Path to userlib. Default: . (current directory) (default ".")
       --verbose         Turn on to see debug information. Default: false
 pflag: help requested
 
 
-$ mendix-userlib-cleaner --target ~/Downloads/userlib        
-10:38:58.906 listAllJars ▶ INFO 001 Finding and parsing JARs
-10:38:59.525 getJarProps ▶ WARN 002 Failed to parse /Users/xcheng/Downloads/userlib/xercesImpl-2.12.1-sp1.jar
-10:38:59.556 computeJarsToKeep ▶ INFO 003 Computing duplicates
-10:38:59.556 computeJarsToKeep ▶ INFO 004 Preferring file xmlsec-2.1.4.jar over xmlsec-2.1.4-copy.jar
-10:38:59.556 cleanJars ▶ INFO 005 Cleaning...
-10:38:59.556 cleanJars ▶ WARN 006 Would remove duplicate of org.apache.santuario.xmlsec: xmlsec-2.1.4-copy.jar
-10:38:59.556 main ▶ INFO 007 Would have removed: 1 files
-10:38:59.556 main ▶ INFO 008 Use --clean to actually remove above file(s)
+$ mendix-userlib-cleaner --target ~/resources/jars
+01:06:03.237 listAllFiles ▶ INFO 001 Listing all files in target directory: ./resources/jars
+01:06:03.237 listAllJars ▶ INFO 002 Finding and parsing JARs
+01:06:03.237 listAllJars ▶ DEBU 003 Processing JAR: resources/jars/activation-1.1.1.jar
+01:06:03.238 getJarProps ▶ DEBU 004 Parsed properties from MANIFEST: {1.1.1 1001001 resources/jars/activation-1.1.1.jar activation-1.1.1.jar Sun Java System Application Server Sun Java System Application Server Sun Microsystems, Inc. }
+01:06:03.238 listAllJars ▶ DEBU 005 Processing JAR: resources/jars/checker-qual-2.5.2.jar
+01:06:03.241 getJarProps ▶ DEBU 006 Parsed properties optimistically: {2.5.2 2005002 resources/jars/checker-qual-2.5.2.jar checker-qual-2.5.2.jar org.checkerframework.dataflow   }
+01:06:03.241 listAllJars ▶ DEBU 007 Processing JAR: resources/jars/checker-qual-2.5.3.jar
+01:06:03.243 getJarProps ▶ DEBU 008 Parsed properties optimistically: {2.5.3 2005003 resources/jars/checker-qual-2.5.3.jar checker-qual-2.5.3.jar org.checkerframework.dataflow   }
+01:06:03.243 listAllJars ▶ DEBU 009 Processing JAR: resources/jars/junit-4.11.jar
+01:06:03.252 getJarProps ▶ DEBU 00a Parsed properties optimistically: {4.11 4011 resources/jars/junit-4.11.jar junit-4.11.jar org.junit   }
+01:06:03.252 listAllJars ▶ DEBU 00b Processing JAR: resources/jars/kafka-streams-2.4.0.jar
+01:06:03.257 getJarProps ▶ DEBU 00c Parsed properties optimistically: {2.4.0 2004000 resources/jars/kafka-streams-2.4.0.jar kafka-streams-2.4.0.jar org.apache.kafka   }
+01:06:03.257 listAllJars ▶ DEBU 00d Processing JAR: resources/jars/xmlbeans-3.1.0.jar
+01:06:03.263 getJarProps ▶ DEBU 00e Parsed properties from MANIFEST: {3.1.0 3001000 resources/jars/xmlbeans-3.1.0.jar xmlbeans-3.1.0.jar org.apache.xmlbeans org.apache.xmlbeans Apache Software Foundation }
+01:06:03.263 computeJarsToKeep ▶ INFO 00f Computing duplicates
+01:06:03.263 computeJarsToKeep ▶ INFO 010 Found newer checker-qual-2.5.3.jar over checker-qual-2.5.2.jar
+01:06:03.263 cleanJars ▶ INFO 011 Cleaning...
+01:06:03.263 cleanJars ▶ DEBU 012 Keeping jar: {1.1.1 1001001 resources/jars/activation-1.1.1.jar activation-1.1.1.jar Sun Java System Application Server Sun Java System Application Server Sun Microsystems, Inc. }
+01:06:03.263 cleanJars ▶ WARN 013 Would remove file org.checkerframework.dataflow: resources/jars/checker-qual-2.5.2.jar
+01:06:03.263 cleanJars ▶ WARN 014 Would remove file org.checkerframework.dataflow: resources/jars/checker-qual-2.5.2.jar.meta
+01:06:03.263 cleanJars ▶ DEBU 015 Keeping jar: {2.5.3 2005003 resources/jars/checker-qual-2.5.3.jar checker-qual-2.5.3.jar org.checkerframework.dataflow   }
+01:06:03.263 cleanJars ▶ DEBU 016 Keeping jar: {4.11 4011 resources/jars/junit-4.11.jar junit-4.11.jar org.junit   }
+01:06:03.263 cleanJars ▶ DEBU 017 Keeping jar: {2.4.0 2004000 resources/jars/kafka-streams-2.4.0.jar kafka-streams-2.4.0.jar org.apache.kafka   }
+01:06:03.263 cleanJars ▶ DEBU 018 Keeping jar: {3.1.0 3001000 resources/jars/xmlbeans-3.1.0.jar xmlbeans-3.1.0.jar org.apache.xmlbeans org.apache.xmlbeans Apache Software Foundation }
+01:06:03.263 cleanJars ▶ INFO 019 Clean up 1 jars and 1 meta files
+01:06:03.263 main ▶ INFO 01a Would have removed: 2 files
+01:06:03.263 main ▶ INFO 01b Use --clean to actually remove above file(s)
 ```
 
 ## Extracting metadata
 
-jar format 1:
+### jar format 1
+
 ```
 $ cat META-INF/maven/com.sun.istack/istack-commons-runtime/pom.properties
 #Created by Apache Maven 3.5.4
@@ -58,7 +79,8 @@ artifactId=istack-commons-runtime
 version=3.0.8
 ```
 
-jar format 2:
+### jar format 2
+
 ```
 $ cat META-INF/MANIFEST.MF
 Manifest-Version: 1.0
@@ -80,7 +102,8 @@ Bundle-SymbolicName: org.apache.velocity
 Bundle-Version: 1.7
 ```
 
-jar format 3:
+### jar format 3
+
 ```
 $ cat META-INF/MANIFEST.MF
 Manifest-Version: 1.0
@@ -102,6 +125,11 @@ Bundle-Description: Google Gson library
 Bundle-SymbolicName: com.google.gson
 Archiver-Version: Plexus Archiver
 ```
+
+### Optimistic parsing
+
+Sometimes there is no usable metadata included in the package. In that case we try to compose the package name by finding the first class file in the jar of which resides in the directory `org` or `com`. e.g. `org.junit`
+
 
 
 ## License
