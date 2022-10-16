@@ -1,0 +1,11 @@
+Picked up _JAVA_OPTIONS: -Djava.net.preferIPv4Stack=true
+[rtlauncher:container$] INFO Evictions for component 'project-userlib':
+Evicted C:\Users\%username%\Documents\Mendix\TPD-Development 2.0\deployment\model\lib\userlib\commons-logging.jar by C:\Users\%username%\Documents\Mendix\TPD-Development 2.0\deployment\model\lib\userlib\commons-logging-1.2.jar.
+Evicted C:\Users\%username%\Documents\Mendix\TPD-Development 2.0\deployment\model\lib\userlib\commons-codec-1.14.jar by C:\Users\%username%\Documents\Mendix\TPD-Development 2.0\deployment\model\lib\userlib\commons-codec-1.15.jar.
+Evicted C:\Users\%username%\Documents\Mendix\TPD-Development 2.0\deployment\model\lib\userlib\httpcore-4.4.6.jar by C:\Users\%username%\Documents\Mendix\TPD-Development 2.0\deployment\model\lib\userlib\httpcore-4.4.13.jar.
+Evicted C:\Users\%username%\Documents\Mendix\TPD-Development 2.0\deployment\model\lib\userlib\commons-codec-1.13.jar by C:\Users\%username%\Documents\Mendix\TPD-Development 2.0\deployment\model\lib\userlib\commons-codec-1.15.jar.
+Evicted C:\Users\%username%\Documents\Mendix\TPD-Development 2.0\deployment\model\lib\userlib\commons-codec-1.11.jar by C:\Users\%username%\Documents\Mendix\TPD-Development 2.0\deployment\model\lib\userlib\commons-codec-1.15.jar.
+[rtlauncher:container$] INFO Container start took 7075. Ready to accept admin requests.
+
+
+

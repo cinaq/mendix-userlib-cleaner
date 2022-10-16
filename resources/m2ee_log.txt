@@ -1,0 +1,32 @@
+Picked up _JAVA_OPTIONS: -Djava.net.preferIPv4Stack=true
+[rtlauncher:container$] INFO Evictions for component 'project-userlib':
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\fontbox-2.0.13.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\fontbox-2.0.24.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\owasp-java-html-sanitizer-20181114.1.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\owasp-java-html-sanitizer-20211018.2.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\checker-qual-2.5.2.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\checker-qual-3.8.0.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\commons-io-2.3.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\commons-io-2.8.0.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\joda-time-2.3.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\joda-time-2.10.9.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\commons-lang3-3.7.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\commons-lang3-3.11.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\pdfbox-2.0.13.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\pdfbox-2.0.24.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\commons-io-2.6.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\commons-io-2.8.0.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\bcprov-jdk15on-1.60.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\bcprov-jdk15on-164.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\commons-lang3-3.9.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\commons-lang3-3.11.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\j2objc-annotations-1.1.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\j2objc-annotations-1.3.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\httpclient-4.5.2.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\httpclient-4.5.10.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\error_prone_annotations-2.2.0.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\error_prone_annotations-2.5.1.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\bcpkix-jdk15on-1.60.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\bcpkix-jdk15on-164.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\owasp-java-html-sanitizer-20170515.1.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\owasp-java-html-sanitizer-20211018.2.jar.
+Evicted C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\commons-logging.jar by C:\Users\%username%\Documents\Mendix\CERES-Development\deployment\model\lib\userlib\commons-logging-1.2.jar.
+[rtlauncher:container$] INFO Container start took 25733. Ready to accept admin requests.
+Mar 08, 2022 1:33:20 PM org.hsqldb.persist.Logger logInfoEvent
+INFO: checkpointClose start
+Mar 08, 2022 1:33:20 PM org.hsqldb.persist.Logger logInfoEvent
+INFO: checkpointClose synched
+Mar 08, 2022 1:33:21 PM org.hsqldb.persist.Logger logInfoEvent
+INFO: checkpointClose script done
+Mar 08, 2022 1:33:21 PM org.hsqldb.persist.Logger logInfoEvent
+INFO: checkpointClose end
+Mar 08, 2022 2:23:37 PM org.hsqldb.persist.Logger logInfoEvent
+INFO: Database closed
+
+
+
