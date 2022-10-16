@@ -202,6 +202,10 @@ func parseManifest(filePath string, text string) JarProperties {
 		} else if key == "Bundle-License" {
 			jarProp.license = value
 		} else if key == "Bundle-Name" || key == "Implementation-Title" {
+			if value == "Apache POI" {
+				// skip this because it's a false positive
+				continue
+			}
 			jarProp.name = value
 			jarProp.packageName = value
 		}
@@ -253,7 +257,10 @@ func parseOptimistic(filePath string) JarProperties {
 	for _, f := range archive.File {
 		if match := re.MatchString(f.Name); match {
 			tokens = strings.Split(f.Name, "/")
-			if len(tokens) > 3 {
+			if len(tokens) > 4 {
+				// eg. org/example/hello/there/MyClass.class
+				tokens = tokens[:4]
+			} else if len(tokens) > 3 {
 				// eg. org/example/hello/MyClass.class
 				tokens = tokens[:3]
 			} else if len(tokens) > 2 {
