@@ -25,15 +25,17 @@ It works as follow:
 - Next we loop over the metadata and determine which JAR to keep and discard duplicates. This is done based on the package name (e.g. org.package.velocity) and the version (e.g. 1.7)
 - Those marked to be discarded are then removed.
 
+Note that `mode` now also accepts path to `m2ee-log.txt`. This file can be obtained when you run your app locally in **Mendix Studio Pro**.
+
 ## Usage
 
 ```bash
 mendix-userlib-cleaner --help
 Usage of mendix-userlib-cleaner:
-      --clean           Turn on to actually remove the duplicate jars. Default: false
-      --mode string     Jar parsing mode. Supported options: auto, strict (default "auto")
-      --target string   Path to userlib. Default: . (current directory) (default ".")
-      --verbose         Turn on to see debug information. Default: false
+      --clean           Turn on to actually remove the duplicate JARs.
+      --mode string     Jar parsing mode. Supported options: auto, strict or path to m2ee-log.txt (default "auto")
+      --target string   Path to userlib. (default ".")
+      --verbose         Turn on to see debug information.
 pflag: help requested
 
 

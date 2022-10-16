@@ -41,7 +41,7 @@ func main() {
 	flag.String("target", ".", "Path to userlib.")
 	flag.Bool("clean", false, "Turn on to actually remove the duplicate JARs.")
 	flag.Bool("verbose", false, "Turn on to see debug information.")
-	flag.String("mode", "auto", "Jar parsing mode. Supported options: auto, strict")
+	flag.String("mode", "auto", "Jar parsing mode. Supported options: auto, strict or path to m2ee-log.txt")
 
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
@@ -51,6 +51,7 @@ func main() {
 	mode := viper.GetString("mode")
 	clean := viper.GetBool("clean")
 	verbose := viper.GetBool("verbose")
+	regularModes := []string{"auto", "strict"}
 
 	backend := logging.NewLogBackend(os.Stderr, "", 0)
 	backendFormatter := logging.NewBackendFormatter(backend, format)
@@ -65,7 +66,15 @@ func main() {
 
 	filePaths := listAllFiles(targetDir)
 	jars := listAllJars(filePaths, mode)
-	keepJars := computeJarsToKeep(jars)
+	keepJars := make(map[string]JarProperties)
+
+	if contains(regularModes, mode) {
+		log.Infof("Mode: %v", mode)
+		keepJars = computeJarsToKeep(jars)
+	} else {
+		log.Infof("Mode: m2ee-log at %v", mode)
+		keepJars = computeJarsToKeepFromM2eeLog(jars, mode)
+	}
 	count := cleanJars(clean, filePaths, jars, keepJars)
 
 	if clean {
@@ -176,7 +185,7 @@ func getJarProps(filePath string, mode string) JarProperties {
 
 	log.Warningf("Failed to parse metadata from %v", filePath)
 
-	return JarProperties{filePath: ""}
+	return JarProperties{filePath: filePath, packageName: filePath, fileName: filepath.Base(filePath), version: ""}
 }
 
 func parseManifest(filePath string, text string) JarProperties {
@@ -274,6 +283,65 @@ func parseOptimistic(filePath string) JarProperties {
 		}
 	}
 	return jarProp
+}
+
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
+}
+
+func computeJarsToKeepFromM2eeLog(jars []JarProperties, m2eeLog string) map[string]JarProperties {
+	log.Info("Computing evicted jars from m2ee log")
+	keepJars := make(map[string]JarProperties)
+	evictedJars := getJarFileNames(m2eeLog)
+
+	for _, jar1 := range jars {
+		if contains(evictedJars, jar1.fileName) {
+			log.Infof("According to m2ee %v was evicted", jar1.fileName)
+			continue
+		}
+
+		if _, ok := keepJars[jar1.packageName]; !ok {
+			keepJars[jar1.packageName] = jar1
+		}
+	}
+	return keepJars
+}
+
+func getJarFileNames(m2eeLog string) []string {
+	b, err := ioutil.ReadFile(m2eeLog)
+	names := []string{}
+	if err != nil {
+		log.Warningf("Unable to read m2ee-log file: %v", err)
+	}
+	text := string(b)
+
+	lines := strings.Split(text, "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if !strings.HasPrefix(line, "Evicted ") {
+			continue
+		}
+
+		pair := strings.Split(line, " by ")
+		if len(pair) < 2 {
+			continue
+		}
+
+		fullPath := strings.Replace(pair[0], "Evicted ", "", 1)
+		forwardTokens := strings.Split(fullPath, "/")
+		forwardLast := forwardTokens[len(forwardTokens)-1]
+		backwardTokens := strings.Split(forwardLast, "\\")
+		backwardLast := backwardTokens[len(backwardTokens)-1]
+		names = append(names, backwardLast)
+	}
+	log.Debugf("Parsed evicted filenames: %v", names)
+	return names
 }
 
 func computeJarsToKeep(jars []JarProperties) map[string]JarProperties {
