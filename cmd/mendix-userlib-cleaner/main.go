@@ -201,7 +201,8 @@ func parseManifest(filePath string, text string) JarProperties {
 
 		key := pair[0]
 		value := pair[1]
-		if key == "Bundle-SymbolicName" || key == "Extension-Name" {
+		// Automatic-Module-Name - used in org.apache.httpcomponents.httpclient / org.apache.httpcomponents.client5.httpclient5
+		if key == "Bundle-SymbolicName" || key == "Extension-Name" || key == "Automatic-Module-Name" {
 			jarProp.packageName = value
 		} else if key == "Bundle-Version" || key == "Implementation-Version" {
 			jarProp.version = value
@@ -216,7 +217,10 @@ func parseManifest(filePath string, text string) JarProperties {
 				continue
 			}
 			jarProp.name = value
-			jarProp.packageName = value
+			if jarProp.packageName == "" {
+				// only use Bundle-Name as packageName if no alternative exists
+				jarProp.packageName = value
+			}
 		}
 	}
 	return jarProp
