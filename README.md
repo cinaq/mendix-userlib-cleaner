@@ -128,6 +128,17 @@ Bundle-SymbolicName: com.google.gson
 Archiver-Version: Plexus Archiver
 ```
 
+### File name parsing
+
+When no usable metadata is found in the manifest or POM files, we try to parse the filename itself to determine the package name and version. For example:
+
+```
+eventTrackingLibrary-1.0.2.jar -> local.eventtracking
+```
+
+And version would be `1.0.2`.
+
+
 ### Optimistic parsing
 
 Sometimes there is no usable metadata included in the package. In that case we try to compose the package name by finding the first class file in the jar of which resides in the directory `org` or `com`. e.g. `org.junit`

@@ -175,11 +175,17 @@ func getJarProps(filePath string, mode string) JarProperties {
 		}
 	}
 
+	jar3 := parseFileName(filePath)
+	if jar3.packageName != "" {
+		log.Debugf("Parsed properties optimistically: %v", jar3)
+		return jar3
+	}
+
 	if mode == "auto" {
-		jar3 := parseOptimistic(filePath)
-		if jar3.packageName != "" {
-			log.Debugf("Parsed properties optimistically: %v", jar3)
-			return jar3
+		jar4 := parseOptimistic(filePath)
+		if jar4.packageName != "" {
+			log.Debugf("Parsed properties optimistically: %v", jar4)
+			return jar4
 		}
 	}
 
@@ -286,6 +292,37 @@ func parseOptimistic(filePath string) JarProperties {
 			break
 		}
 	}
+	return jarProp
+}
+
+func parseFileName(filePath string) JarProperties {
+	// Initialize empty JarProperties with filepath and filename
+	jarProp := JarProperties{
+		filePath:    filePath,
+		fileName:    filepath.Base(filePath),
+		packageName: "",
+	}
+
+	// Split filename on - to get name and version parts
+	// e.g. "eventTrackingLibrary-1.0.2.jar" -> ["eventTrackingLibrary", "1.0.2.jar"]
+	parts := strings.Split(filepath.Base(filePath), "-")
+	if len(parts) < 2 {
+		return jarProp
+	}
+
+	// Get the version by removing .jar from last part
+	version := strings.TrimSuffix(parts[len(parts)-1], ".jar")
+	jarProp.version = version
+	jarProp.versionNumber = convertVersionToNumber(version)
+
+	// Join all parts except last one to get name
+	name := strings.Join(parts[:len(parts)-1], "-")
+	jarProp.name = name
+
+	// Convert name to package format (assuming Java package naming convention)
+	// e.g. "eventTrackingLibrary" -> "local.eventtracking"
+	jarProp.packageName = "local." + strings.ToLower(name)
+
 	return jarProp
 }
 
