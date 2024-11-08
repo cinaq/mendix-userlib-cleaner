@@ -418,18 +418,28 @@ func cleanJars(remove bool, filePaths []string, jars []JarProperties, keepJars m
 }
 
 func convertVersionToNumber(version string) int {
-	// naive implementation. Feel free to suggest improvements
-
+	// Split version into numeric components
 	re := regexp.MustCompile("[0-9]+")
+	parts := re.FindAllString(version, -1)
 
-	multiplier := 1000
-	number := 0
-	for _, c := range re.FindAllString(version, -1) {
-		t, _ := strconv.Atoi(c)
-		if number > 0 {
-			number = number * multiplier
-		}
-		number += t
+	// Pad with zeros to handle versions with different component counts
+	for len(parts) < 4 {
+		parts = append(parts, "0")
 	}
+
+	// Use decreasing multipliers to ensure proper version ordering
+	// This allows for up to 999 in each component
+	multipliers := []int{1000000000, 1000000, 1000, 1}
+	number := 0
+
+	for i, part := range parts[:4] { // Only use first 4 components
+		val, _ := strconv.Atoi(part)
+		// Clamp values to avoid overflow
+		if val > 999 {
+			val = 999
+		}
+		number += val * multipliers[i]
+	}
+
 	return number
 }
