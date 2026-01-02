@@ -1,8 +1,10 @@
 # Mendix Userlib Cleaner
 
-This little utility can be used to identify and clean duplicate JARs. It was created mainly for [Mendix](https://mendix.com) apps due to lack of formal dependency management support. This is by no means limited to Mendix use-case. It works for arbitary systems.
+This little utility can be used to identify and clean duplicate JARs. It was created mainly for [Mendix](https://mendix.com) apps due to lack of formal dependency management support. This is by no means limited to Mendix use-case. It works for arbitary systems that doesn't implement formal dependency management like [Gradle](https://gradle.org).
 
 Please note that this is not a magic tool that solves all JAR problems. After running the clean tool, always clean your project, rebuild and run it locally.
+
+> While Mendix Userlub Cleaner is a small and static executable, recently there's a new tool [mendix-userlib-cleanup](https://github.com/EGorsel/mendix-userlib-cleanup) that is more extensive. 
 
 ## In rush?
 
@@ -14,7 +16,7 @@ Please note that this is not a magic tool that solves all JAR problems. After ru
 
 ## Why clean userlib?
 
-Most Mendix modules include one or more JAR files. JAR files are java libraries. This is a common approach to extend functionalities in Mendix apps. However as your application ages and grows there's a need to add more modules or update existing ones which introduces newer versions. These JAR's are not managed by Mendix Studio. Due to these dynamics, newer JAR can be introduced at later stage. This causes duplication. Due to JAR duplication it often causes compatibility issues. If you are lucky these errors occur during compile time. At other times these occur during runtime.
+Most Mendix modules include one or more JAR files. JAR files are java libraries. This is a common approach to extend functionalities in Mendix apps. However as your application ages and grows there's a need to add more modules or update existing ones which introduces newer versions. These JAR's are not managed by Mendix Studio. Due to these dynamics, newer JAR can be introduced at later stage. This causes duplication. Due to JAR duplication it often causes compatibility issues. If you are lucky these errors occur during compile time. At other times these occur during runtime. Which is notorious to troubleshoot.
 
 ## How does this work?
 
